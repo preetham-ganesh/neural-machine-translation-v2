@@ -11,6 +11,8 @@ BASE_PATH = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.append(BASE_PATH)
 warnings.filterwarnings("ignore")
 
+import tensorflow_datasets as tfds
+
 from src.utils import check_directory_path_existence
 
 
@@ -59,6 +61,42 @@ def download_europarl_dataset(language: str) -> None:
 
     print(
         "Finished downloading Europarl dataset for {}-en in {} sec.".format(
+            language, round(time.time() - start_time, 3)
+        )
+    )
+    print()
+
+
+def download_paracrawl_dataset(language: str) -> None:
+    """Downloads the Paracrawl dataset for the language given as input by user.
+
+    Downloads the Paracrawl dataset for the language given as input by user.
+
+    Args:
+        language: A string for the language the Europarl dataset should be downloaded.
+
+    Returns:
+        None.
+    """
+    # Asserts type & value of the arguments.
+    assert isinstance(language, str), "Variable language should be of type 'str'."
+    assert language in [
+        "es",
+        "fr",
+        "de",
+    ], "Variable language should have value as 'es', 'fr', or 'de'."
+
+    # Downloads paracrawl dataset into the corresponding directory for the current european language.
+    start_time = time.time()
+    _, info = tfds.load(
+        "para_crawl/en{}".format(language),
+        split="train",
+        with_info=True,
+        shuffle_files=True,
+        data_dir="data/raw_data/paracrawl/{}-en".format(language),
+    )
+    print(
+        "Finished downloading paracrawl dataset for {}-en in {} sec.".format(
             language, round(time.time() - start_time, 3)
         )
     )
