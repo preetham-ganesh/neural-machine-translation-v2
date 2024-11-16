@@ -79,6 +79,12 @@ class PreprocessText(object):
         """
         # Asserts type & values of the arguments.
         assert isinstance(text, str), "Variable text should be of type 'str'."
+        assert language in [
+            "en",
+            "es",
+            "fr",
+            "de",
+        ], "Variable language should have value as 'en', 'es', 'fr', or 'de'."
 
         # Removes HTML markup components from text provided as input.
         text = self.remove_html_markup(text)
