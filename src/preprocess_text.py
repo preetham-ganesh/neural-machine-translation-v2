@@ -149,7 +149,7 @@ class PreprocessText(object):
         filtered_text = " ".join(filtered_words)
         return filtered_text
 
-    def identify_rare_words(self, language: str) -> None:
+    def identify_language_rare_words(self, language: str) -> None:
         """Identifies rare words for the language in the dataset.
 
         Identifies rare words for the language in the dataset.
@@ -188,3 +188,28 @@ class PreprocessText(object):
             )
         )
         print("")
+
+    def identify_common_rare_words(self) -> None:
+        """Identifies common rare words between en & the european language.
+
+        Identifies common rare words between en & the european language.
+
+        Args:
+            None.
+
+        Returns:
+            None.
+        """
+        # Identifies rare words for each language in the dataset.
+        self.identify_language_rare_words("en")
+        self.identify_language_rare_words(self.language)
+
+        # Identifies common rare words between en & the european language.
+        self.common_rare_words = list(
+            self.rare_words[self.language] & self.rare_words["en"]
+        )
+        print(
+            "No. of common rare words between en & {} texts: {}".format(
+                self.language, len(self.common_rare_words)
+            )
+        )
