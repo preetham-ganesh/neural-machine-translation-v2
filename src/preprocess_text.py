@@ -1,5 +1,6 @@
 import unicodedata
 import re
+import time
 
 from bs4 import BeautifulSoup
 
@@ -147,3 +148,43 @@ class PreprocessText(object):
         # Converts of list of filtered words into a single string.
         filtered_text = " ".join(filtered_words)
         return filtered_text
+
+    def identify_rare_words(self, language: str) -> None:
+        """Identifies rare words for the language in the dataset.
+
+        Identifies rare words for the language in the dataset.
+
+        Args:
+            language: A string for the name of the language the dataset belongs to.
+
+        Returns:
+            None.
+        """
+        # Asserts type & values of the arguments.
+        assert isinstance(language, str), "Variable language should be of type 'str'."
+
+        # Iterates across unique words in the dataset based on language.
+        start_time = time.time()
+        for word in self.unique_word_count[language].keys():
+            # If count of word is 1, word consists of only alphabets, and length of word is between 8 & 10,
+            # then word is added to rare words list.
+            if (
+                self.unique_word_count[language][word] == 1
+                and word.isalpha()
+                and not word.isdigit()
+                and len(word) > 7
+                and len(word) < 11
+            ):
+                self.rare_words[language].add(word)
+
+        print(
+            "Finished identifying rare words for {} language in {} sec.".format(
+                language, round(time.time() - start_time, 3)
+            )
+        )
+        print(
+            "No. of rare words for {} language in the dataset: {}".format(
+                language, len(self.rare_words[language])
+            )
+        )
+        print("")
