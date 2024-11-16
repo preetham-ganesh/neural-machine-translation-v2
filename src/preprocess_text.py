@@ -8,6 +8,7 @@ from typing import List
 
 
 class PreprocessText(object):
+    """Preprocess English & European language text pairs to remove unwanted characters, and perfom OOV-handling."""
 
     def __init__(self, language: str, n_max_words_per_text: int) -> None:
         """Creates object attributes for the PreprocessText class.
