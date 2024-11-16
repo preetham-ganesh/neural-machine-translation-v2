@@ -78,3 +78,38 @@ def extract_tar_file(
         )
     )
     print()
+
+
+def load_text_file(file_name: str, extension: str, directory_path: str) -> str:
+    """Loads the text file as a string.
+
+    Loads the text file as a string.
+
+    Args:
+        file_name: A string for the name of text file.
+        extension: A string for the extension of the text file.
+        directory_path: A string for the location where the text file exists.
+
+    Returns:
+        A string for the text loaded from the file.
+
+    Exceptions:
+        FileNotFoundError: If file path does not exist, then this error occurs.
+    """
+    # Types checks input arguments.
+    assert isinstance(file_name, str), "Variable file_name should be of type 'str'."
+    assert isinstance(extension, str), "Variable extension should be of type 'str'."
+    assert isinstance(
+        directory_path, str
+    ), "Variable directory_path should be of type 'str'."
+
+    # Loads the text file as a string.
+    file_path = "{}/{}.{}".format(directory_path, file_name, extension)
+    try:
+        with open(file_path, "r") as out_file:
+            text = out_file.read()
+        out_file.close()
+        return text
+
+    except FileNotFoundError:
+        raise FileNotFoundError("File path {} does not exist.".format(file_path))
