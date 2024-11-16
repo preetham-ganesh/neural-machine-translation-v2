@@ -4,6 +4,8 @@ import time
 
 from bs4 import BeautifulSoup
 
+from typing import List
+
 
 class PreprocessText(object):
 
@@ -205,7 +207,7 @@ class PreprocessText(object):
         self.identify_language_rare_words(self.language)
 
         # Identifies common rare words between en & the european language.
-        self.common_rare_words = list(
+        self.common_rare_words = set(
             self.rare_words[self.language] & self.rare_words["en"]
         )
         print(
@@ -213,3 +215,34 @@ class PreprocessText(object):
                 self.language, len(self.common_rare_words)
             )
         )
+
+    def oov_handling(self, en_text: str, eu_text: str) -> List[str]:
+        """Identifies common rare words between English & European text, & converts them.
+
+        Identifies common rare words between English & European text, & converts them.
+        E.g.: 'preetham' -> '<p#r#e#e#t#h#a#m>'
+
+        Args:
+            en_text: A string for the processed english language text.
+            eu_text: A string for the processed european language text.
+
+        Returns:
+            A list of strings for oov-handled english & european language text.
+        """
+        # Asserts type & values of the arguments.
+        assert isinstance(en_text, str), "Variable en_text should be of type 'str'."
+        assert isinstance(eu_text, str), "Variable eu_text should be of type 'str'."
+
+        # Converts text into unique set of words.
+        en_words = set(en_text.split(" "))
+        eu_words = set(eu_text.split(" "))
+
+        # Identifies common list of rare words between en & eu text.
+        common_words = list(en_words & self.common_rare_words & eu_words)
+
+        # Iterates across words in common words list.
+        for word in common_words:
+            # Updates common word in both text. E.g.: 'preetham' -> '<p#r#e#e#t#h#a#m>'
+            en_text = en_text.replace(" {} ".format(word), " <" + "#".join(word) + "> ")
+            eu_text = eu_text.replace(" {} ".format(word), " <" + "#".join(word) + "> ")
+        return [en_text, eu_text]
