@@ -4,12 +4,15 @@ import warnings
 import argparse
 import time
 import requests
+import logging
 
 
 os.environ["TF_CPP_MIN_LOG_LEVEL"] = "3"
 BASE_PATH = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.append(BASE_PATH)
 warnings.filterwarnings("ignore")
+logging.getLogger("tensorflow").setLevel(logging.FATAL)
+
 
 import tensorflow_datasets as tfds
 
@@ -44,26 +47,35 @@ def download_europarl_dataset(language: str) -> None:
 
     # Download the compressed file.
     start_time = time.time()
-    response = requests.get(dataset_links[language])
-
-    # Checks if the response has a success code. If not then prints the error message.
-    assert response.status_code == 200, response.text
 
     # Checks if the following directory path exists.
     dataset_directory_path = check_directory_path_existence("data/raw_data/europarl")
 
-    # Saves the compressed file in the response as a .tgz file.
-    with open(
-        "{}/{}-en.tgz".format(dataset_directory_path, language), "wb"
-    ) as out_file:
-        out_file.write(response.content)
-    out_file.close()
+    # Checks if the file already exists. If yes, then does not download the file.
+    file_path = "{}/{}-en.tgz".format(dataset_directory_path, language)
+    if os.path.exists(file_path):
+        print("{}-en.tgz already exists.".format(language))
 
-    print(
-        "Finished downloading Europarl dataset for {}-en in {} sec.".format(
-            language, round(time.time() - start_time, 3)
+    # Else, downloads it and saves it.
+    else:
+        # Sends request for the current language dataset file.
+        response = requests.get(dataset_links[language])
+
+        # Checks if the response has a success code. If not then prints the error message.
+        assert response.status_code == 200, response.text
+
+        # Saves the compressed file in the response as a .tgz file.
+        with open(
+            "{}/{}-en.tgz".format(dataset_directory_path, language), "wb"
+        ) as out_file:
+            out_file.write(response.content)
+        out_file.close()
+
+        print(
+            "Finished downloading Europarl dataset for {}-en in {} sec.".format(
+                language, round(time.time() - start_time, 3)
+            )
         )
-    )
     print()
 
 
