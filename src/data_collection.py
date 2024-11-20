@@ -88,7 +88,7 @@ def download_paracrawl_dataset(language: str) -> None:
 
     # Downloads paracrawl dataset into the corresponding directory for the current european language.
     start_time = time.time()
-    _, info = tfds.load(
+    _, _ = tfds.load(
         "para_crawl/en{}".format(language),
         split="train",
         with_info=True,
@@ -104,6 +104,8 @@ def download_paracrawl_dataset(language: str) -> None:
 
 
 def main():
+    print()
+
     # Parses the arguments.
     parser = argparse.ArgumentParser()
     parser.add_argument(
@@ -113,20 +115,6 @@ def main():
         required=True,
         help="Enter name of language for which datasets should be downloaded. Current options: 'es', fr' or 'de'.",
     )
-    parser.add_argument(
-        "-ntps",
-        "--n_texts_per_subset",
-        type=str,
-        required=True,
-        help="Enter power of 2 for no. of texts in a subset (E.g.: 16).",
-    )
-    parser.add_argument(
-        "-pdv",
-        "--processed_dataset_version",
-        type=str,
-        required=True,
-        help="Enter version for storing the processed dataset.",
-    )
     args = parser.parse_args()
 
     # Checks if the arguments, have valid values.
@@ -135,6 +123,12 @@ def main():
         "fr",
         "de",
     ], "Argument language should have value as 'es', 'fr', or 'de'."
+
+    # Downloads the Europarl dataset for the language given as input by user.
+    download_europarl_dataset(args.language)
+
+    # Downloads the Paracrawl dataset for the language given as input by user.
+    download_paracrawl_dataset(args.language)
 
 
 if __name__ == "__main__":
